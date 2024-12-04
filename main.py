@@ -41,6 +41,15 @@ def insert_with_json():
     start_time = time.time()
     errors = client.insert_rows_json(table_id, rows)
     elapsed_time = time.time() - start_time
+    
+    # Print detailed errors if any
+    if errors:
+        print("Errors in insert_rows_json:")
+        for error in errors:
+            print(error)
+    else:
+        print("insert_rows_json completed successfully with no errors.")
+    
     return elapsed_time, errors
 
 # Function to insert rows using insert_rows
@@ -57,8 +66,15 @@ def insert_with_rows():
     errors = client.insert_rows(table, rows, selected_fields=schema)
     elapsed_time = time.time() - start_time
     
+    # Print detailed errors if any
+    if errors:
+        print("Errors in insert_rows:")
+        for error in errors:
+            print(error)
+    else:
+        print("insert_rows completed successfully with no errors.")
+    
     return elapsed_time, errors
-
 
 # Function to insert rows using a multi-line SQL INSERT
 def insert_with_multi_line():
@@ -72,10 +88,16 @@ def insert_with_multi_line():
     VALUES {values}
     """
     start_time = time.time()
-    query_job = client.query(query)
-    query_job.result()  # Wait for completion
-    elapsed_time = time.time() - start_time
-    return elapsed_time
+    try:
+        query_job = client.query(query)
+        query_job.result()  # Wait for completion
+        elapsed_time = time.time() - start_time
+        print("multi-line SQL completed successfully with no errors.")
+        return elapsed_time
+    except Exception as e:
+        elapsed_time = time.time() - start_time
+        print(f"Errors in multi-line SQL: {e}")
+        return elapsed_time
 
 # Main function to compare latencies
 def main():
@@ -102,4 +124,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
